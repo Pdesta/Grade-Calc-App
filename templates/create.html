@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Create Subject</title></head>
+<body>
+    <h2>Create Subject</h2>
+    <form method="post">
+        Subject name: <input name="name" required><br>
+        Number of tests: <input type="number" id="num_tests" min="1" required><br>
+        <div id="weights"></div>
+        <button type="submit">Create</button>
+    </form>
+    <script>
+        document.getElementById("num_tests").addEventListener("change", function () {
+            let n = this.value;
+            let html = "";
+            for (let i = 0; i < n; i++) {
+                html += `Test ${i+1} weight (%): <input name="weights[]" type="number" step="0.1" min="0" max="100" required><br>`;
+            }
+            document.getElementById("weights").innerHTML = html;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A+ Grade App</title> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
+    <style>h1{text-align: center;}</style>
+</head>
+<body>
+    <h1>A+ Grade App</h1>
+    <a href="/create">➕ Create New Subject</a>
+    <ul>
+        {% for subject in subjects %}
+        <li><a href="/subject/{{ subject }}">{{ subject }}</a></li>
+        {% endfor %}
+    </ul>
+    <form action="/reset-all" method="post" onsubmit="return confirm('Reset all data?');">
+        <button type="submit">💥 Reset Everything</button>
+    </form>
+</body>
+</html>

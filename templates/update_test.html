@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Update Test Score</title></head>
+<body>
+    <h2>Update test score for {{ name }}</h2>
+    <form method="post">
+        <label>Test:
+            <select name="test_id">
+                {% for test in subject.tests %}
+                <option value="{{ test.id }}" {% if test.id == selected_test_id %}selected{% endif %}>
+                    Test {{ loop.index }}
+                </option>
+                {% endfor %}
+            </select>
+            
+        </label><br>
+        <label>Mark (%): <input type="number" name="mark" step="0.1" min="0" max="100" required></label><br>
+        <button type="submit">Update</button>
+    </form>
+    <hr>
+
+    <a href="javascript:history.back()">← Back to Tests</a>
+</body>
+</html>
