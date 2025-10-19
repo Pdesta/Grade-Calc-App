@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from db_helper import (
     get_subject_with_tests,
     get_all_subject_names,
@@ -25,8 +25,10 @@ def create_subject_route():
         name = request.form["name"].strip()
         weights = [float(w) for w in request.form.getlist("weights[]")]
         if abs(sum(weights) - 100) > 0.1:
-            return "Weights must total 100%", 400
+            flash("Weights must total 100%. Please try again.", "warning")
+            return redirect(request.referrer or url_for("create_subject_route"))
         create_subject(name, weights)
+        flash(f"Subject '{name}' created successfully!", "success")
         return redirect(url_for("index"))
     return render_template("create.html")
 
@@ -35,11 +37,16 @@ def view_subject(name):
     subject = get_subject_with_tests(name)
     if not subject:
         return "Subject not found", 404
+    
+    # -- Automatically assigns number to each test -- #
+    for i, test in enumerate(subject["tests"], start=1):
+        test["name"] = f"Test {i}"
 
     weights = [test["weight"] for test in subject["tests"]]
     scores = [test["score"] for test in subject["tests"]]
     target = subject["target"]
 
+    # -- Calculate grade so far -- #
     total_weight_entered = 0
     total_score_weighted = 0
     for test in subject["tests"]:
@@ -49,19 +56,22 @@ def view_subject(name):
 
     grade_so_far = round((total_score_weighted / total_weight_entered) * 100, 2) if total_weight_entered > 0 else 0
 
-    needed_results = []
+    # -- Remaining tests -- #
     remaining_tests = [test for test in subject["tests"] if test["score"] is None]
-
     total_so_far = total_score_weighted
     total_weight_remaining = sum(test["weight"] for test in remaining_tests)
+    
+    needed_results = []
 
     if total_weight_remaining > 0:
         required_avg = (target - total_so_far) * 100 / total_weight_remaining
         required_avg = max(0, min(100, required_avg))  # Clamp between 0 and 100
 
-        for test in remaining_tests:
-            needed_score = required_avg  # Simplified, same needed average for all remaining tests
-            needed_results.append((test["id"], round(needed_score, 2)))
+        for i, test in enumerate(remaining_tests, start=1):
+            needed_results.append({
+                "name": test["name"],
+                "needed_score": round(required_avg, 2)
+            })
 
     return render_template(
         "subject.html",
@@ -131,4 +141,4 @@ def update_target_route(name):
     return redirect(url_for("view_subject", name=name))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

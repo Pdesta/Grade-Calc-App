@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head><title>Update Test Score</title></head>
+<head>
+    <title>Update Test Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
+</head>
 <body>
-    <h2>Update test score for {{ name }}</h2>
+    <h1>Update test score for {{ name }}</h1>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <form method="post">
         <label>Test:
             <select name="test_id">

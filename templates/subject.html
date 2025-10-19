@@ -10,7 +10,10 @@
     </style>
 </head>
 <body>
+    <!-- Main Content -->
     <h1>{{ name }} - Grade Summary</h1>
+    
+    
 
     <div class="grade-summary">
         <p><strong>Target Final Grade:</strong> {{ subject.target }}%</p>
@@ -29,7 +32,7 @@
                 {% endif %}
                 &nbsp;
                 <a href="/subject/{{ name }}/update?test_id={{ test.id }}">Update</a>
-                <form action="/reset-chosenTest/{{ name }}/{{ test.id }}" method="post" style="display:inline;" onsubmit="return confirm('Reset this test score?');">
+                <form action="/reset-chosenTest/{{ name }}/{{ test.id }}" method="post" style="display:inline;" onsubmit="return ;">
                     <button type="submit">Reset</button>
                 </form>
             </li>
@@ -39,8 +42,10 @@
     <h2>Needed Scores on Remaining Tests</h2>
     {% if needed_results %}
         <ul>
-            {% for test_id, needed_score in needed_results %}
-                <li>Test {{ test_id }}: Need at least <strong>{{ needed_score }}%</strong></li>
+            {% for test in needed_results %}
+                <li>
+                    {{ test.name }}: Need at least <strong>{{ test.needed_score }}%</strong>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
@@ -55,7 +60,7 @@
 
     <hr>
 
-    <a href="/">← Back to Subjects</a>
+    <a href="/">← Back to Subjects</a> <!-- go back a page -->
 
     <form action="/reset-tests/{{ name }}" method="post" onsubmit="return confirm('Reset all test scores?');" style="margin-top: 1rem;">
         <button type="submit">Reset All Test Scores</button>
@@ -64,6 +69,8 @@
     <form action="/delete-subject/{{ name }}" method="post" onsubmit="return confirm('Delete this subject?');" style="margin-top: 0.5rem;">
         <button type="submit" style="background-color:#c00e0e; color:#fff;">Delete Subject</button>
     </form>
+    
 
 </body>
+
 </html>

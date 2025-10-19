@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>A+ Grade App</title> 
-    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
-    <style>h1{text-align: center;}</style>
+    <link rel="stylesheet" href="static/design.css">
 </head>
 <body>
-    <h1>A+ Grade App</h1>
+    <h1 >A+ Grade App</h1>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <a href="/create">➕ Create New Subject</a>
     <ul>
         {% for subject in subjects %}
-        <li><a href="/subject/{{ subject }}">{{ subject }}</a></li>
+        <li><a href="/subject/{{ subject }}"> > {{ subject }}</a></li>
         {% endfor %}
     </ul>
     <form action="/reset-all" method="post" onsubmit="return confirm('Reset all data?');">

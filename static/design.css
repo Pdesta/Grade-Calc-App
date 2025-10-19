@@ -1,9 +1,22 @@
+h1 { 
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  padding-block: 20px;
+
+  background-color: #007BFF;
+  color: white;
+}
+
 body {
-  background-color: #e7e7f0; /* Or any other color */
+  background-color: #f9f9fa; /* Or any other color */
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  text-align: center;
 }
+
 
 .grade-summary {
     background: #e36565;
@@ -12,4 +25,66 @@ body {
     margin-bottom: 1rem;
     font-family: Arial, sans-serif;
   }
+
+a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    padding-block: 15px;
+}
+a:hover {
+    color: #0056b3;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+li {
+    margin: 10px 0;
+}
+button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+button:hover {
+    background-color: #c82333;
+}
+footer {
+    background-color: #f1f1f1;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+.flash-messages {
+    width: 80%;
+    margin: 20px auto;
+    text-align: center;
+}
+.alert {
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+}
+.alert-success {
+    background-color: #28a745;
+}
+.alert-info {
+    background-color: #17a2b8;
+}
+.alert-warning {
+    background-color: #ffc107;
+    color: black;
+}
+.alert-danger, .alert-error {
+    background-color: #dc3545;
+}
+
+
   

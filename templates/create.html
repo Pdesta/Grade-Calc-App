@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head><title>Create Subject</title></head>
+<head>
+    <title>Create Subject</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
+</head>
 <body>
-    <h2>Create Subject</h2>
+    <h1>Create Subject</h1>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <form method="post">
         Subject name: <input name="name" required><br>
         Number of tests: <input type="number" id="num_tests" min="1" required><br>
         <div id="weights"></div>
+        <a href="/">← Back to Subjects</a> <!-- go back a page -->
         <button type="submit">Create</button>
+        
     </form>
     <script>
         document.getElementById("num_tests").addEventListener("change", function () {
