@@ -19,7 +19,27 @@
             </div>
         {% endif %}
     {% endwith %}
-    <a href="/create">➕ Create New Subject</a>
+        <!-- Modal for Creating Subject -->
+    <div id="createModal">
+        <div class="modal-content">
+          <h2>Create a New Subject</h2>
+          <form action="{{ url_for('create_subject_route') }}" method="POST">
+            <label>Subject Name:</label><br>
+            <input type="text" name="name" required><br><br>
+            <label>Number of Tests:</label><br>
+            <select name="num_tests" required>
+                {% for i in range(1,11) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %} 
+            </select><br><br>
+        
+            <button type="submit">Create Subject</button>
+            <a href="{{ url_for('index') }}" class="close-btn">Cancel</a>
+          </form>
+        </div>
+      </div>
+      
+    <a href="#createModal" class="button">➕ Add New Subject</a>
     <ul>
         {% for subject in subjects %}
         <li><a href="/subject/{{ subject }}"> > {{ subject }}</a></li>

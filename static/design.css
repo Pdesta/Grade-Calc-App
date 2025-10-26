@@ -59,6 +59,8 @@ footer {
     padding: 10px 0;
     border-top: 1px solid #ddd;
 }
+
+/* Flash message styles */
 .flash-messages {
     width: 80%;
     margin: 20px auto;
@@ -86,5 +88,93 @@ footer {
     background-color: #dc3545;
 }
 
-
+/* Popup styles for update test scores */
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .popup-box {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: left;
+  }
+  
+  .popup-box h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .popup-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .cancel-btn {
+    text-decoration: none;
+    color: #007BFF;
+    background: none;
+    padding: 8px 12px;
+  }
+  
+  .cancel-btn:hover {
+    text-decoration: underline;
+  }
+  
+/* Modal background */
+#createModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* dark overlay */
+    display: none; /* hidden by default */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Modal box styling */
+  #createModal:target {
+    display: flex; /* show only when linked via anchor */
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+    text-align: left;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: popIn 0.3s ease-out;
+  }
+  
+  /* Simple appear animation */
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  /* Cancel button */
+  .close-btn {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .close-btn:hover {
+    color: #0056b3;
+  }
   

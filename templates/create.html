@@ -5,36 +5,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
 </head>
 <body>
-    <h1>Create Subject</h1>
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
+    <div class="container">
+        <h1>Create Subject</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-            </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if step == 1 %}
+            <form method="POST" action="{{ url_for('create_subject_route') }}">
+                <label>Subject Name:</label>
+                <input type="text" name="name" required><br><br>
+
+                <label>Number of Tests:</label>
+                <input type="number" name="num_tests" min="1" max="10" required><br><br>
+
+                <button type="submit" class="btn btn-primary">Next</button>
+            </form>
+
+        {% elif step == 2 %}
+            <h2>Enter Weights for {{ name }}</h2>
+            <form method="POST" action="{{ url_for('create_subject_route') }}">
+                <input type="hidden" name="name" value="{{ name }}">
+                <label>Test Weights (must total 100%):</label><br>
+                <div>
+                    {% if num_tests is defined %}
+                        {% for i in range(num_tests) %}
+                            <input type="number" step="0.1" min="0" max="100" name="weights[]" required>% 
+                        {% endfor %}
+                    {% endif %}
+                </div><br>
+
+                <button type="submit" class="btn btn-success">Create Subject</button>
+            </form>
         {% endif %}
-    {% endwith %}
-    <form method="post">
-        Subject name: <input name="name" required><br>
-        Number of tests: <input type="number" id="num_tests" min="1" required><br>
-        <div id="weights"></div>
-        <a href="/">← Back to Subjects</a> <!-- go back a page -->
-        <button type="submit">Create</button>
-        
-    </form>
-    <script>
-        document.getElementById("num_tests").addEventListener("change", function () {
-            let n = this.value;
-            let html = "";
-            for (let i = 0; i < n; i++) {
-                html += `Test ${i+1} weight (%): <input name="weights[]" type="number" step="0.1" min="0" max="100" required><br>`;
-            }
-            document.getElementById("weights").innerHTML = html;
-        });
-    </script>
+        <br>
+        <a href="/">← Back to Subjects</a>
+    </div>
 </body>
 </html>

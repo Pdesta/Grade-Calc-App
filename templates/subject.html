@@ -13,14 +13,26 @@
     <!-- Main Content -->
     <h1>{{ name }} - Grade Summary</h1>
     
-    
-
     <div class="grade-summary">
         <p><strong>Target Final Grade:</strong> {{ subject.target }}%</p>
         <p><strong>Grade So Far:</strong> {{ grade_so_far }}%</p>
     </div>
 
     <h2>Tests</h2>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
     <ul>
         {% for test in subject.tests %}
             <li>
@@ -31,7 +43,7 @@
                     <em>Not entered</em>
                 {% endif %}
                 &nbsp;
-                <a href="/subject/{{ name }}/update?test_id={{ test.id }}">Update</a>
+                <a href="/subject/{{ name }}/update?test_id={{ test.id }}" class="update-btn">Update</a>
                 <form action="/reset-chosenTest/{{ name }}/{{ test.id }}" method="post" style="display:inline;" onsubmit="return ;">
                     <button type="submit">Reset</button>
                 </form>
@@ -62,13 +74,43 @@
 
     <a href="/">← Back to Subjects</a> <!-- go back a page -->
 
-    <form action="/reset-tests/{{ name }}" method="post" onsubmit="return confirm('Reset all test scores?');" style="margin-top: 1rem;">
+    <form action="/reset-tests/{{ name }}" method="post">
         <button type="submit">Reset All Test Scores</button>
     </form>
 
     <form action="/delete-subject/{{ name }}" method="post" onsubmit="return confirm('Delete this subject?');" style="margin-top: 0.5rem;">
         <button type="submit" style="background-color:#c00e0e; color:#fff;">Delete Subject</button>
     </form>
+    
+    {% if update_mode %}
+    <div class="popup-overlay">
+      <div class="popup-box">
+        <h2>Update Test Score</h2>
+        <form method="post" action="/subject/{{ name }}/update">
+            <label>Test:
+                <select name="test_id">
+                    {% for test in subject.tests %}
+                    <option value="{{ test.id }}" {% if test.id == selected_test_id %}selected{% endif %}>
+                        Test {{ loop.index }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label><br>
+
+            <label>Mark (%): 
+                <input type="number" name="mark" step="0.1" min="0" max="100" required>
+            </label><br>
+
+            <div class="popup-actions">
+              <button type="submit">Update</button>
+              <a href="/subject/{{ name }}" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+
     
 
 </body>

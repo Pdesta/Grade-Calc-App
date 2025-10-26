@@ -22,15 +22,39 @@ def index():
 @app.route("/create", methods=["GET", "POST"])
 def create_subject_route():
     if request.method == "POST":
-        name = request.form["name"].strip()
-        weights = [float(w) for w in request.form.getlist("weights[]")]
-        if abs(sum(weights) - 100) > 0.1:
-            flash("Weights must total 100%. Please try again.", "warning")
-            return redirect(request.referrer or url_for("create_subject_route"))
-        create_subject(name, weights)
-        flash(f"Subject '{name}' created successfully!", "success")
-        return redirect(url_for("index"))
-    return render_template("create.html")
+        name = request.form.get("name", "").strip()
+        num_tests = request.form.get("num_tests")
+        weights = request.form.getlist("weights[]")
+
+        # Step 1 -> user just entered subject name + number of tests
+        if num_tests and not weights:
+            try:
+                num_tests = int(num_tests)
+            except (TypeError, ValueError):
+                flash("Please enter a valid number of tests.", "warning")
+                return redirect(url_for("create_subject_route"))
+
+            return render_template("create.html", step=2, name=name, num_tests=int(num_tests))
+
+        # Step 2 -> user submitted weights
+        elif weights:
+            try:
+                weights = [float(w) for w in weights]
+            except ValueError:
+                flash("All weights must be valid numbers.", "danger")
+                return render_template("create.html", step=2, name=name, num_tests=len(weights))
+
+            if abs(sum(weights) - 100) > 0.1:
+                flash("Weights must total 100%. Please try again.", "warning")
+                return render_template("create.html", step=2, name=name, num_tests=len(weights))
+
+            create_subject(name, weights)
+            flash(f"Subject '{name}' created successfully!", "success")
+            return redirect(url_for("index"))
+
+    # Step 0 -> initial page load
+    return render_template("create.html", step=1)
+
 
 @app.route("/subject/<name>")
 def view_subject(name):
@@ -72,6 +96,17 @@ def view_subject(name):
                 "name": test["name"],
                 "needed_score": round(required_avg, 2)
             })
+    # --- Detect query param for modal --- #
+    selected_test_id = request.args.get("Update") #string or None
+    show_update = bool(selected_test_id)
+
+    # convert selected_test_id to appropriate type if needed
+    if selected_test_id is not None:
+        try:
+            selected_test_id = int(selected_test_id)
+        except ValueError:
+            selected_test_id = None
+            show_update = False
 
     return render_template(
         "subject.html",
@@ -79,6 +114,8 @@ def view_subject(name):
         subject=subject,
         grade_so_far=grade_so_far,
         needed_results=needed_results,
+        show_update=show_update,
+        selected_test_id=selected_test_id
     )
 
 @app.route("/reset-all", methods=["POST"])
@@ -116,19 +153,43 @@ def update_test_route(name):
     if not subject:
         return "Subject not found", 404
 
-    # Get the test_id from query string (GET)
+    # Get test_id from query string
     test_id = request.args.get("test_id", type=int)
 
     if request.method == "POST":
-        # POST form has test_id and mark inputs
+        # Handle form submission
         test_id = int(request.form["test_id"])
         new_score = float(request.form["mark"])
-        subject_id = subject['id']
+        subject_id = subject["id"]
         update_test_score(subject_id, test_id, new_score)
+        flash("Test updated successfully!", "success")
         return redirect(url_for("view_subject", name=name))
 
-    # For GET, pass the test_id so you can set the selected option in the form
-    return render_template("update_test.html", name=name, subject=subject, selected_test_id=test_id)
+    # Calculate grade_so_far and needed_results again (so page displays correctly)
+    total_weight_entered = sum(t["weight"] for t in subject["tests"] if t["score"] is not None)
+    total_score_weighted = sum((t["score"] * t["weight"]) / 100 for t in subject["tests"] if t["score"] is not None)
+    grade_so_far = round((total_score_weighted / total_weight_entered) * 100, 2) if total_weight_entered > 0 else 0
+    needed_results = []
+    remaining_tests = [t for t in subject["tests"] if t["score"] is None]
+    total_weight_remaining = sum(t["weight"] for t in remaining_tests)
+
+    if total_weight_remaining > 0:
+        required_avg = (subject["target"] - total_score_weighted) * 100 / total_weight_remaining
+        required_avg = max(0, min(100, required_avg))
+        for i, t in enumerate(remaining_tests, start=1):
+            needed_results.append({"name": f"Test {i}", "needed_score": round(required_avg, 2)})
+
+    # 🧠 Render the same subject page, but with popup active
+    return render_template(
+        "subject.html",
+        name=name,
+        subject=subject,
+        grade_so_far=grade_so_far,
+        needed_results=needed_results,
+        update_mode=True,  # ✅ tells HTML to display the popup
+        selected_test_id=test_id
+    )
+
 
 
 @app.route("/subject/<name>/target", methods=["POST"])
