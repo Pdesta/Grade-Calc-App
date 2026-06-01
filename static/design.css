@@ -5,7 +5,7 @@ h1 {
   margin: 0;
   padding-block: 20px;
 
-  background-color: #007BFF;
+  background-color: #072647;
   color: white;
 }
 
@@ -19,7 +19,6 @@ body {
 
 
 .grade-summary {
-    background: #e36565;
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -28,12 +27,12 @@ body {
 
 a {
     text-decoration: none;
-    color: #007BFF;
+    color: #0d345e;
     font-weight: bold;
     padding-block: 15px;
 }
 a:hover {
-    color: #0056b3;
+    color: #041c36;
 }
 ul {
     list-style-type: none;
@@ -122,7 +121,7 @@ footer {
   
   .cancel-btn {
     text-decoration: none;
-    color: #007BFF;
+    color: #0a2f57;
     background: none;
     padding: 8px 12px;
   }

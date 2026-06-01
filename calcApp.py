@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from db_helper import (
     get_subject_with_tests,
@@ -12,6 +13,7 @@ from db_helper import (
 )
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 app.secret_key = '212121'
 
 @app.route("/")
